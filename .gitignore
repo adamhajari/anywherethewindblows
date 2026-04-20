@@ -1,0 +1,5 @@
+wp_archive/
+.DS_Store
+*.swp
+*.swo
+*~

@@ -23,7 +23,12 @@
       "Bash(git branch *)",
       "Bash(gh repo *)",
       "Bash(git rm *)",
-      "Bash(mv static/* .)"
+      "Bash(mv static/* .)",
+      "Bash(grep \"^index.html$\")",
+      "Bash(gh api *)"
+    ],
+    "additionalDirectories": [
+      "/Users/adam/dev/web/hostgator3"
     ]
   }
 }

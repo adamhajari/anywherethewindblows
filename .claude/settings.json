@@ -25,7 +25,9 @@
       "Bash(git rm *)",
       "Bash(mv static/* .)",
       "Bash(grep \"^index.html$\")",
-      "Bash(gh api *)"
+      "Bash(gh api *)",
+      "Bash(sed -i '' 's|href=\"/wp-content/|href=\"wp-content/|g' index.html)",
+      "Bash(sed -i '' 's|src=\"/wp-content/|src=\"wp-content/|g' index.html)"
     ],
     "additionalDirectories": [
       "/Users/adam/dev/web/hostgator3"

@@ -16,10 +16,10 @@ from bs4 import BeautifulSoup
 
 
 class WordPressCrawler:
-    def __init__(self, sql_file, base_url="http://localhost:8888", output_dir="."):
+    def __init__(self, sql_file, base_url="http://localhost:8888"):
         self.sql_file = sql_file
         self.base_url = base_url
-        self.output_dir = Path(output_dir)
+        self.output_dir = Path("static")
         self.session = requests.Session()
         self.session.timeout = 10
 
@@ -151,7 +151,7 @@ class WordPressCrawler:
             print(f"  ❌ Error fetching {url}: {e}")
             return None
 
-    def clean_html(self, html, original_url, depth=0):
+    def clean_html(self, html, original_url):
         """Remove dynamic elements and fix links."""
         soup = BeautifulSoup(html, 'lxml')
 
@@ -169,18 +169,13 @@ class WordPressCrawler:
             if any(x in script_str for x in ['wp-api', 'emoji', 's.w.org', 'wp-emoji']):
                 script.decompose()
 
-        # Calculate relative path depth based on output path
-        # e.g., index.html = 0, about-us/index.html = 1, 2012/05/post/index.html = 3
-        depth = original_url.count('/') + 1
-
         # Rewrite internal links
         for a in soup.find_all('a', href=True):
             href = a['href']
             if 'localhost:8888' in href or href.startswith('/?') or href.startswith('?'):
                 new_path = self.rewrite_link(href)
                 if new_path:
-                    # Make path relative
-                    a['href'] = self.make_relative(new_path, depth)
+                    a['href'] = new_path
                 else:
                     # For links we can't map (unpublished pages), replace with #
                     if 'localhost:8888' in href:
@@ -191,40 +186,24 @@ class WordPressCrawler:
             if 'src' in img.attrs:
                 src = img['src']
                 if 'localhost:8888' in src:
-                    src_clean = src.replace('http://localhost:8888', '')
-                    img['src'] = self.make_relative(src_clean, depth)
+                    img['src'] = src.replace('http://localhost:8888', '')
             if 'srcset' in img.attrs:
                 srcset = img['srcset']
-                img['srcset'] = self.make_relative(srcset.replace('http://localhost:8888', ''), depth)
+                img['srcset'] = srcset.replace('http://localhost:8888', '')
 
         # Rewrite script src
         for script in soup.find_all('script', src=True):
             src = script['src']
             if 'localhost:8888' in src:
-                src_clean = src.replace('http://localhost:8888', '')
-                script['src'] = self.make_relative(src_clean, depth)
+                script['src'] = src.replace('http://localhost:8888', '')
 
         # Rewrite stylesheet links
         for link in soup.find_all('link', href=True):
             href = link['href']
             if 'localhost:8888' in href:
-                href_clean = href.replace('http://localhost:8888', '')
-                link['href'] = self.make_relative(href_clean, depth)
+                link['href'] = href.replace('http://localhost:8888', '')
 
         return str(soup)
-
-    def make_relative(self, path, depth):
-        """Convert absolute path to relative based on page depth."""
-        if not path.startswith('/'):
-            return path
-
-        # Go up 'depth' directories, then add the path
-        if depth <= 1:
-            # Top level or one level deep
-            return path
-
-        relative = '../' * (depth - 1) + path.lstrip('/')
-        return relative
 
     def rewrite_link(self, href):
         """Convert WordPress URL to static path."""
@@ -299,7 +278,7 @@ class WordPressCrawler:
         print("\n📄 Fetching pages...")
         homepage = self.fetch_page('')
         if homepage:
-            clean = self.clean_html(homepage, '', depth=0)
+            clean = self.clean_html(homepage, '')
             self.save_page(clean, 'index.html')
             print(f"  ✓ Saved index.html")
 
@@ -309,10 +288,9 @@ class WordPressCrawler:
             url = self.pages[page_id]['url']
             html = self.fetch_page(url)
             if html:
+                clean = self.clean_html(html, url)
                 output_path = self.build_output_path(page_id, 'page')
                 if output_path:
-                    depth = output_path.count('/')
-                    clean = self.clean_html(html, url, depth=depth)
                     self.save_page(clean, output_path)
 
         # Fetch all posts
@@ -321,10 +299,9 @@ class WordPressCrawler:
             url = self.posts[post_id]['url']
             html = self.fetch_page(url)
             if html:
+                clean = self.clean_html(html, url)
                 output_path = self.build_output_path(post_id, 'post')
                 if output_path:
-                    depth = output_path.count('/')
-                    clean = self.clean_html(html, url, depth=depth)
                     self.save_page(clean, output_path)
 
         # Copy assets

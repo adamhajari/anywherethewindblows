@@ -155,6 +155,12 @@ class WordPressCrawler:
         """Remove dynamic elements and fix links."""
         soup = BeautifulSoup(html, 'lxml')
 
+        # Add base tag for correct asset resolution on GitHub Pages
+        head = soup.find('head')
+        if head:
+            base = soup.new_tag('base', href='/anywherethewindblows/')
+            head.insert(0, base)
+
         # Remove admin bar, search form, comment form
         for selector in ['#wpadminbar', '#searchform', '.comment-form', '#respond',
                         'script[src*="emoji"]', 'link[rel="EditURI"]', 'link[rel="wlwmanifest"]',

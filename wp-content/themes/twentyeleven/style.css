@@ -86,6 +86,7 @@ body {
 	margin: 0 7.6%;
 }
 #primary {
+	background: #fff;
 	float: left;
 	margin: 0 -26.4% 0 0;
 	width: 100%;
@@ -96,6 +97,7 @@ body {
 	width: 58.4%;
 }
 #secondary {
+	background: #fff;
 	float: right;
 	margin-right: 7.6%;
 	width: 18.8%;
@@ -103,6 +105,7 @@ body {
 
 /* Singular */
 .singular #primary {
+	background: #fff;
 	margin: 0;
 }
 .singular #content,
@@ -133,6 +136,7 @@ body {
 /* Showcase */
 .page-template-showcase-php #primary,
 .left-sidebar.page-template-showcase-php #primary {
+	background: #fff;
 	margin: 0;
 }
 .page-template-showcase-php #content,
@@ -154,6 +158,7 @@ body {
 
 /* error404 */
 .error404 #primary {
+	background: #fff;
 	float: none;
 	margin: 0;
 }
@@ -183,6 +188,7 @@ body {
 
 /* Right Content */
 .left-sidebar #primary {
+	background: #fff;
 	float: right;
 	margin: 0 0 0 -26.4%;
 	width: 100%;
@@ -193,6 +199,7 @@ body {
 	width: 58.4%;
 }
 .left-sidebar #secondary {
+	background: #fff;
 	float: left;
 	margin-left: 7.6%;
 	margin-right: 0;
@@ -213,6 +220,7 @@ body {
 	margin-bottom: 1.625em;
 }
 .one-column #secondary {
+	background: #fff;
 	float: none;
 	margin: 0 7.6%;
 	width: auto;
@@ -2410,6 +2418,7 @@ p.comment-form-comment {
 		margin-bottom: 1.625em;
 	}
 	#main #secondary {
+		background: #fff;
 		float: none;
 		margin: 0 7.6%;
 		width: auto;
@@ -2677,6 +2686,7 @@ p.comment-form-comment {
 		box-shadow: none;
 	}
 	#primary {
+		background: #fff;
 		float: left;
 		margin: 0;
 		width: 100%;

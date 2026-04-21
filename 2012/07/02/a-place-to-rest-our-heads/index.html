@@ -126,9 +126,96 @@ img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
 	<div class="entry-content">
 		<p>Traveling is a tiring endeavor. At the end of most days what we want most is a soft place to lay our heads and a good night&#8217;s sleep. Frequently we settle for just a night&#8217;s sleep (good or otherwise). On occasion we are handed a couple of hours of dozing in 15 minute increments sitting upright on a 12 hour, bumpy, loud, overnight bus ride to our next destination. A good night of sleep is occasionally forfeited by budget travelers in order to save a few bucks or to gain an extra day of sightseeing by taking overnight transportation. Sometimes it&#8217;s just the price one pays for a good adventure. Our trip thus far has been no exception. We&#8217;ve slept on airplanes, in buses, on benches in airports, in tents on the beach, and even on the deck of a boat. There has been no shortage of variety in our sleeping accommodations throughout our trip. So it was fitting that we ended up on one of Southeast Asia&#8217;s most notorious bus rides on the evening of the last day in June. A 28 hour journey crossing the Vietnam/Laos border and winding through the jungle clad mountains of northern Laos. In honor of our one month anniversary of traveling, I&#8217;ve put together the following illustrations.</p>
 <p>&nbsp;</p>
-<p>[easychart type=&#8221;pie&#8221; title=&#8221;where we slept in june&#8221; groupnames=&#8221;Hotels/Hostels,Tent,Airport,Bus,Airplane,Homestay/Monestary,Boat&#8221; group1values=&#8221;16&#8243; group2values=&#8221;3&#8243; group3values=&#8221;3&#8243; group4values=&#8221;3&#8243; group5values=&#8221;2&#8243; group6values=&#8221;2&#8243; group7values=&#8221;1&#8243; chartfadecolor=&#8221;FFFFFF&#8221;]</p>
+<div style="max-width: 500px; margin: 20px auto;">
+  <canvas id="pieChart" style="max-width: 100%;"></canvas>
+</div>
 <p>&nbsp;</p>
-<p>[easychart type=&#8221;horizbarstack&#8221; height=&#8221;50&#8243; width=&#8221;200&#8243; title=&#8221;nights slept on a mattress&#8221; groupnames=&#8221;Hotels/Hostels,Tent,Airport,Bus,Airplane,Homestay/Monestary,Boat&#8221; valuenames=&#8221;no mattress,mattress&#8221; group1values=&#8221;0,16&#8243; group2values=&#8221;3,0&#8243; group3values=&#8221;3,0&#8243; group4values=&#8221;3,0&#8243; group5values=&#8221;2,0&#8243; group6values=&#8221;2,0&#8243; group7values=&#8221;0,1&#8243;]</p>
+<div style="max-width: 500px; margin: 20px auto;">
+  <canvas id="barChart" style="max-width: 100%;"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Pie Chart: Where we slept in June
+new Chart(document.getElementById('pieChart'), {
+  type: 'pie',
+  data: {
+    labels: ['Hotels/Hostels', 'Tent', 'Airport', 'Bus', 'Airplane', 'Homestay/Monastery', 'Boat'],
+    datasets: [{
+      data: [16, 3, 3, 3, 2, 2, 1],
+      backgroundColor: [
+        '#FF6384',
+        '#36A2EB',
+        '#FFCE56',
+        '#4BC0C0',
+        '#9966FF',
+        '#FF9F40',
+        '#C9CBCF'
+      ],
+      borderColor: '#fff',
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: 'where we slept in june',
+        font: { size: 14 }
+      },
+      legend: {
+        position: 'bottom'
+      }
+    }
+  }
+});
+
+// Stacked Bar Chart: Nights slept on a mattress
+new Chart(document.getElementById('barChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Hotels/Hostels', 'Tent', 'Airport', 'Bus', 'Airplane', 'Homestay/Monastery', 'Boat'],
+    datasets: [
+      {
+        label: 'no mattress',
+        data: [0, 3, 3, 3, 2, 2, 0],
+        backgroundColor: '#FF6384',
+        borderColor: '#fff',
+        borderWidth: 1
+      },
+      {
+        label: 'mattress',
+        data: [16, 0, 0, 0, 0, 0, 1],
+        backgroundColor: '#36A2EB',
+        borderColor: '#fff',
+        borderWidth: 1
+      }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    scales: {
+      x: {
+        stacked: true
+      },
+      y: {
+        stacked: true
+      }
+    },
+    plugins: {
+      title: {
+        display: true,
+        text: 'nights slept on a mattress',
+        font: { size: 14 }
+      },
+      legend: {
+        position: 'bottom'
+      }
+    }
+  }
+});
+</script>
 			</div><!-- .entry-content -->
 
 	<footer class="entry-meta">

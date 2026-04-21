@@ -155,6 +155,10 @@ class WordPressCrawler:
         """Remove dynamic elements and fix links."""
         soup = BeautifulSoup(html, 'lxml')
 
+        # Remove any existing base tags
+        for existing_base in soup.find_all('base'):
+            existing_base.decompose()
+
         # Add base tag for correct asset resolution on GitHub Pages
         head = soup.find('head')
         if head:
@@ -192,24 +196,50 @@ class WordPressCrawler:
             if 'src' in img.attrs:
                 src = img['src']
                 if 'localhost:8888' in src:
-                    img['src'] = src.replace('http://localhost:8888', '')
+                    img['src'] = self.normalize_path(src)
             if 'srcset' in img.attrs:
                 srcset = img['srcset']
-                img['srcset'] = srcset.replace('http://localhost:8888', '')
+                img['srcset'] = self.normalize_srcset(srcset)
 
         # Rewrite script src
         for script in soup.find_all('script', src=True):
             src = script['src']
             if 'localhost:8888' in src:
-                script['src'] = src.replace('http://localhost:8888', '')
+                script['src'] = self.normalize_path(src)
 
         # Rewrite stylesheet links
         for link in soup.find_all('link', href=True):
             href = link['href']
             if 'localhost:8888' in href:
-                link['href'] = href.replace('http://localhost:8888', '')
+                link['href'] = self.normalize_path(href)
 
         return str(soup)
+
+    def normalize_path(self, url):
+        """Convert absolute paths to relative paths for base tag resolution."""
+        # Remove domain
+        if 'localhost:8888' in url:
+            url = url.split('localhost:8888')[-1]
+
+        # Remove /anywherethewindblows/ prefix to make it relative
+        # Base tag will add this back, ensuring consistency across all pages
+        if url.startswith('/anywherethewindblows/'):
+            url = url[len('/anywherethewindblows'):]
+
+        return url
+
+    def normalize_srcset(self, srcset):
+        """Normalize srcset attribute with multiple URLs."""
+        parts = []
+        for part in srcset.split(','):
+            part = part.strip()
+            if ' ' in part:
+                url, size = part.rsplit(' ', 1)
+                url = self.normalize_path(url)
+                parts.append(f"{url} {size}")
+            else:
+                parts.append(self.normalize_path(part))
+        return ', '.join(parts)
 
     def rewrite_link(self, href):
         """Convert WordPress URL to static path."""

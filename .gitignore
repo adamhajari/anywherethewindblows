@@ -3,3 +3,4 @@ wp_archive/
 *.swp
 *.swo
 *~
+.claude/

@@ -5,22 +5,25 @@ from datetime import datetime
 
 # Build a chronological list of all blog posts
 posts = []
-for root, dirs, files in os.walk('/Users/adam/dev/web/hostgator3/2012'):
+base_dir = '/Users/adam/dev/web/hostgator3'
+for root, dirs, files in os.walk(os.path.join(base_dir, '2012')):
     if 'index.html' in files:
-        # Extract date from path
+        # Extract date from path structure: /2012/MM/DD/slug/
         parts = root.split('/')
-        if len(parts) >= 3:
+        # parts = [..., '2012', 'MM', 'DD', 'slug']
+        if len(parts) >= 4:
             try:
-                year = int(parts[-3])
-                month = int(parts[-2])
-                day = int(parts[-1])
+                year = int(parts[-4])
+                month = int(parts[-3])
+                day = int(parts[-2])
                 date = datetime(year, month, day)
+                rel_path = root.replace(base_dir + '/', '')
                 posts.append({
                     'date': date,
                     'path': root,
-                    'rel_path': root.replace('/Users/adam/dev/web/hostgator3/', '')
+                    'rel_path': rel_path
                 })
-            except (ValueError, IndexError):
+            except (ValueError, IndexError) as e:
                 pass
 
 # Sort posts chronologically
@@ -38,46 +41,28 @@ for i, post in enumerate(posts):
 
     original_content = content
 
-    # Find the navigation nav-single element
     # Previous post
     if i > 0:
         prev_post = posts[i - 1]
-        prev_rel = prev_post['rel_path'].replace(post['rel_path'].rsplit('/', 1)[0] + '/', '')
-
-        # Calculate relative path from current to previous
-        current_depth = post['path'].count('/')
-        prev_depth = prev_post['path'].count('/')
-        depth_diff = current_depth - prev_depth
-
-        # Build relative path
-        if depth_diff > 0:
-            rel_prefix = '../' * depth_diff
-        else:
-            rel_prefix = ''
-
-        prev_href = rel_prefix + prev_post['rel_path'].split('/')[-1] + '/index.html'
-        # Normalize to use ../../../ pattern consistently
         prev_href = '/' + prev_post['rel_path'] + '/index.html'
-
         # Replace empty href in nav-previous with correct link
         content = re.sub(
-            r'(<span class="nav-previous"><a href=")("")([^>]*>.*?</a></span>)',
-            r'\1' + prev_href + r'\3',
+            r'(<span class="nav-previous"><a href=")("")',
+            r'\1' + prev_href + r'"',
             content,
-            flags=re.DOTALL
+            count=1
         )
 
     # Next post
     if i < len(posts) - 1:
         next_post = posts[i + 1]
         next_href = '/' + next_post['rel_path'] + '/index.html'
-
         # Replace empty href in nav-next with correct link
         content = re.sub(
-            r'(<span class="nav-next"><a href=")("")([^>]*>.*?</a></span>)',
-            r'\1' + next_href + r'\3',
+            r'(<span class="nav-next"><a href=")("")',
+            r'\1' + next_href + r'"',
             content,
-            flags=re.DOTALL
+            count=1
         )
 
     if content != original_content:
